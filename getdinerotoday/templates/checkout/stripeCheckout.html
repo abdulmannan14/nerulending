@@ -118,9 +118,9 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card padding-15">
-                    <!-- <div class="card-header">Your cart:</div> -->
+                    <div class="card-header">Your cart:</div>
                     <div class="card-body">
-                        <!-- {% if products %}
+                        {% if products %}
                             <table class="table">
                                 <thead class="thead-light">
                                 <tr>
@@ -153,10 +153,10 @@
                             </table>
                         {% else %}
                             <div class="text-center">Your cart is empty.</div>
-                        {% endif %} -->
+                        {% endif %}
 
 
-                        <!-- {% if add_card %}
+                        {% if add_card %}
                             Add card:
                             {% if cards_available %}
                                 <form action="{% url "business:stripe_checkout" %}" method="post">{% csrf_token %}
@@ -211,7 +211,7 @@
                                         {% if not products %}disabled{% endif %}>Pay ${{ amount }}</button>
                             </form>
                         {% endif %}
-                    </div> -->
+                    </div>
 
 
                     {% if offer_steps %}

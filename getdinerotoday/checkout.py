@@ -23,9 +23,8 @@ def get_common_context(request, context=None):
 class StripeCheckout(View):
     def get(self, request):
         UsersService.create_new_user_from_steps(self.request, request)
-
         profile = Profile.objects.get(user=request.user)
-        # stripe_id = profile.stripe_id
+        stripe_id = profile.stripe_id
         add_new_payment_method = True
         cards_available = False
         amount = 0
@@ -34,28 +33,28 @@ class StripeCheckout(View):
             'card_last4': ''
         }
         sources_available = []
-        # if stripe_id:
-        #     stripe_user = StripeService.get_user_by_id(stripe_id)
-        #     sources_available = stripe_user['sources']['data']
-        #     if stripe_user['default_source']:
-        #         add_new_payment_method = False
-        #         cards_available = True
-        #         card_id = stripe_user['default_source']
-        #         for i in stripe_user['sources']['data']:
-        #             if i['id'] == card_id:
-        #                 def_card['card_brand'] = i['brand']
-        #                 def_card['card_last4'] = i['last4']
-        #                 break
-        # if request.session.get('add_new_card'):
-        #     add_new_payment_method = True
-        #     request.session.pop('add_new_card')
-        # source_id = request.session.get('use_source_id')
-        # if source_id:
-        #     for i in sources_available:
-        #         if i['id'] == source_id:
-        #             def_card['card_brand'] = i['brand']
-        #             def_card['card_last4'] = i['last4']
-        #             break
+        if stripe_id:
+            stripe_user = StripeService.get_user_by_id(stripe_id)
+            sources_available = stripe_user['sources']['data']
+            if stripe_user['default_source']:
+                add_new_payment_method = False
+                cards_available = True
+                card_id = stripe_user['default_source']
+                for i in stripe_user['sources']['data']:
+                    if i['id'] == card_id:
+                        def_card['card_brand'] = i['brand']
+                        def_card['card_last4'] = i['last4']
+                        break
+        if request.session.get('add_new_card'):
+            add_new_payment_method = True
+            request.session.pop('add_new_card')
+        source_id = request.session.get('use_source_id')
+        if source_id:
+            for i in sources_available:
+                if i['id'] == source_id:
+                    def_card['card_brand'] = i['brand']
+                    def_card['card_last4'] = i['last4']
+                    break
 
         products = request.session.get('ordering_products')
         if products:
@@ -70,11 +69,11 @@ class StripeCheckout(View):
         return render(request,
                       "checkout/stripeCheckout.html",
                       context=get_common_context(request, {
-                                                            # "add_card": add_new_payment_method,
-                                                        #    "def_card": def_card,
+                                                            "add_card": add_new_payment_method,
+                                                           "def_card": def_card,
                                                            "amount": round(amount, 2),
                                                            "products": products,
-                                                        #    "cards_available": cards_available,
+                                                           "cards_available": cards_available,
                                                            "sources_available": sources_available,
                                                            "offer_steps": offer_steps
                                                            }))
